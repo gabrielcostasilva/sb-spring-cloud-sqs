@@ -1,0 +1,9 @@
+Resources: 
+  GetTodos: 
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: "get-todos"
+  NewTodo: 
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: "new-todo"
