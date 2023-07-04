@@ -4,10 +4,14 @@ This project uses the [SQS feature](https://docs.awspring.io/spring-cloud-aws/do
 > If you need to understand the application, checkout the original [to-do project](https://github.com/gabrielcostasilva/java-todo.git).
 
 ## Overview
-This project decouples front- and back-end by using [Amazon SQS](https://aws.amazon.com/sqs/) as a messaging system. 
+This project decouples front- and back-end by using [Amazon SQS](https://aws.amazon.com/sqs/) as a messaging system. The Figure below illustrates the main screen.
+
+<img src="main-screen.png" />
+
+Adding a new to-do sends a message to `new-todo` queue. The back-end saves the message to the database and sends a list of existing to-dos to `get-todos` queue.
 
 ### Front-end
-If the front-end find `Todo`s in the SQS queue, it loads them to show in the GUI, like so: 
+If the front-end find `Todo`s in the `get-todos` SQS queue, it loads them to show in the GUI, like so: 
 
 ```java
 (...)
@@ -60,7 +64,7 @@ public String createTodo(Todo aTodo) {
 1. Sends `Todo` data to the `new-todo` queue as a message.
 
 ### Back-end
-A listener awaits for new messages, like so:
+A listener awaits for new messages from `new-todo` queue, like so:
 
 ```java
 @SqsListener("new-todo") // (1)
@@ -154,7 +158,7 @@ public class TodoController {
 In addition to the `io.awspring.cloud.spring-cloud-aws-starter-sqs` dependency, the dependency management for `io.awspring.cloud.spring-cloud-aws-dependencies` is also necessary.
 
 ## Running the Project
-1. Create two SQS queues: `new-todo` and `get-todos`
+1. Upload the [`sqs-cf-template.yml`](./sqs-cf-template.yml) file to the CloudFormation console to create two SQS queues
 2. Create credentials for CLI access with AWS IAM, and set writing and reading permissions 
 3. Configure your AWS credentials for _aws cli_ with `aws configure`
 4. Start the back-end project with `mvn spring-boot:run`
